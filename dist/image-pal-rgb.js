@@ -1,0 +1,259 @@
+/******/ (function(modules) { // webpackBootstrap
+/******/ 	// The module cache
+/******/ 	var installedModules = {};
+/******/
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/
+/******/ 		// Check if module is in cache
+/******/ 		if(installedModules[moduleId]) {
+/******/ 			return installedModules[moduleId].exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = installedModules[moduleId] = {
+/******/ 			i: moduleId,
+/******/ 			l: false,
+/******/ 			exports: {}
+/******/ 		};
+/******/
+/******/ 		// Execute the module function
+/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+/******/
+/******/ 		// Flag the module as loaded
+/******/ 		module.l = true;
+/******/
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/
+/******/
+/******/ 	// expose the modules object (__webpack_modules__)
+/******/ 	__webpack_require__.m = modules;
+/******/
+/******/ 	// expose the module cache
+/******/ 	__webpack_require__.c = installedModules;
+/******/
+/******/ 	// define getter function for harmony exports
+/******/ 	__webpack_require__.d = function(exports, name, getter) {
+/******/ 		if(!__webpack_require__.o(exports, name)) {
+/******/ 			Object.defineProperty(exports, name, {
+/******/ 				configurable: false,
+/******/ 				enumerable: true,
+/******/ 				get: getter
+/******/ 			});
+/******/ 		}
+/******/ 	};
+/******/
+/******/ 	// getDefaultExport function for compatibility with non-harmony modules
+/******/ 	__webpack_require__.n = function(module) {
+/******/ 		var getter = module && module.__esModule ?
+/******/ 			function getDefault() { return module['default']; } :
+/******/ 			function getModuleExports() { return module; };
+/******/ 		__webpack_require__.d(getter, 'a', getter);
+/******/ 		return getter;
+/******/ 	};
+/******/
+/******/ 	// Object.prototype.hasOwnProperty.call
+/******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
+/******/
+/******/ 	// __webpack_public_path__
+/******/ 	__webpack_require__.p = "";
+/******/
+/******/ 	// Load entry module and return exports
+/******/ 	return __webpack_require__(__webpack_require__.s = 2);
+/******/ })
+/************************************************************************/
+/******/ ([
+/* 0 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+module.exports = function (_ref) {
+  var hasAlpha = _ref.hasAlpha,
+      maxColors = _ref.maxColors,
+      minDensity = _ref.minDensity,
+      maxDensity = _ref.maxDensity,
+      cubicCells = _ref.cubicCells;
+
+  if (typeof hasAlpha !== 'boolean') throw new Error('options.hasAlpha is required');
+
+  var options = {
+    hasAlpha: hasAlpha,
+    maxColors: Math.min(Math.max(1, maxColors), 20) || 10,
+    minDensity: Math.min(Math.max(0.001, minDensity), 1) || 0.005,
+    maxDensity: maxDensity === false ? false : Math.min(Math.max(0.001, maxDensity), 1) || false,
+    cubicCells: Math.min(Math.max(3, cubicCells), 4) || 4
+  };
+
+  return options;
+};
+
+/***/ }),
+/* 1 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+module.exports = function (imageData, _ref) {
+  var hasAlpha = _ref.hasAlpha,
+      maxColors = _ref.maxColors,
+      minDensity = _ref.minDensity,
+      maxDensity = _ref.maxDensity,
+      cubicCells = _ref.cubicCells,
+      colorPlacer = _ref.colorPlacer;
+
+  // pre-allocate cells3d[x][y][z]
+  // pre-allocate cells[i]
+  var x = void 0,
+      y = void 0,
+      z = void 0,
+      i = void 0,
+      cell = void 0;
+  var cells3d = new Array(cubicCells);
+  var cells = new Array(Math.pow(cubicCells, 3));
+  for (x = 0, i = 0; x < cubicCells; x++) {
+    cells3d[x] = new Array(cubicCells);
+    for (y = 0; y < cubicCells; y++) {
+      cells3d[x][y] = new Array(cubicCells);
+      for (z = 0; z < cubicCells; z++, i++) {
+        cells3d[x][y][z] = cells[i] = [];
+      }
+    }
+  }
+
+  var bytesPerPixel = hasAlpha ? 4 : 3;
+
+  // color placement
+  var byte = void 0,
+      color = void 0;
+  var pixels = Math.floor(imageData.length / bytesPerPixel);
+  for (i = 0; i < pixels; i++) {
+    byte = i * bytesPerPixel;
+    color = {
+      rgb: [imageData[byte], imageData[byte + 1], imageData[byte + 2]],
+      alpha: hasAlpha ? imageData[byte + 3] : 255
+    };
+
+    var cellInfo = findCell(colorPlacer(color), cubicCells);
+    cells3d[cellInfo.x][cellInfo.y][cellInfo.z].push(color);
+  }
+
+  // sort cells
+  cells.sort(function (a, b) {
+    return a.length > b.length ? -1 : a.length < b.length ? 1 : 0;
+  });
+
+  // compute cell densities
+  var cellDensities = cells.map(function (colors) {
+    return {
+      density: colors.length / pixels,
+      colors: colors
+    };
+  });
+
+  // remove cells that don't meet min criteria
+  cellDensities = cellDensities.filter(function (cellData) {
+    return cellData.density >= minDensity;
+  });
+
+  /* support for maxDensity is disabled for now -- not working as intended. might need a per-colour-space filter option
+  if (maxDensity && cellDensities.length > 1 && cellDensities[0].density >= maxDensity) {
+    // only filter if:
+    // 1. maxDensity is enabled
+    // 2. More than one cell exists
+    // 3. Meets the maxDensity requirement
+    // 4. Never filter more than the first matching cell
+    cellDensities = cellDensities.slice(1); // remove first
+  }
+  */
+
+  // adhere to maxColors
+  if (cellDensities.length > maxColors) {
+    cellDensities = cellDensities.slice(0, maxColors);
+  }
+
+  // with remaining cells that match critera, extract median colors
+  var medianColors = cellDensities.map(function (cellData) {
+    var colorIdx = Math.floor(cellData.colors.length / 2);
+    var medianColor = cellData.colors[colorIdx];
+
+    // attach hex colors for final palette
+    medianColor.hex = rgbToHex(medianColor.rgb[0], medianColor.rgb[1], medianColor.rgb[2]);
+    medianColor.density = cellData.density;
+
+    return medianColor;
+  });
+
+  return medianColors;
+};
+
+function findCell(placement, cubicCells) {
+  return {
+    x: Math.max(0, Math.ceil(Math.min(placement.x, 1) * cubicCells) - 1),
+    y: Math.max(0, Math.ceil(Math.min(placement.y, 1) * cubicCells) - 1),
+    z: Math.max(0, Math.ceil(Math.min(placement.z, 1) * cubicCells) - 1)
+  };
+}
+
+function componentToHex(c) {
+  var hex = c.toString(16);
+  return hex.length === 1 ? "0" + hex : hex;
+}
+
+function rgbToHex(r, g, b) {
+  return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
+}
+
+/***/ }),
+/* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _rgb = __webpack_require__(3);
+
+var _rgb2 = _interopRequireDefault(_rgb);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+window.imagePalRgb = _rgb2.default;
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
+
+var getOptions = __webpack_require__(0);
+var getColors = __webpack_require__(1);
+
+module.exports = function (imageData, _ref) {
+  var colorPlacer = _ref.colorPlacer,
+      options = _objectWithoutProperties(_ref, ['colorPlacer']);
+
+  var opts = _extends({
+    colorPlacer: colorPlacer || rgbColorPlacer
+  }, getOptions(options));
+  return getColors(imageData, opts);
+};
+
+function rgbColorPlacer(c) {
+  return {
+    x: c.rgb[0] / 256,
+    y: c.rgb[1] / 256,
+    z: c.rgb[2] / 256
+  };
+}
+
+/***/ })
+/******/ ]);
+//# sourceMappingURL=image-pal-rgb.js.map
