@@ -1,7 +1,7 @@
 # Intro
 
 Retrieve [human perceivable](https://en.wikipedia.org/wiki/CIELUV) palette of colors from images leveraging color quantization. What sets Image-Pal apart
-from other image-based color pallete generators is that you can [easily plugin other color spaces](#custom-color-spaces) (or variations of existing)
+from other image-based color palette generators is that you can [easily plugin other color spaces](#custom-color-spaces) (or variations of existing)
 to achieve the desired palette.
 
 ![NPM](https://raw.githubusercontent.com/asilvas/image-pal/master/docs/colorcube.png)
