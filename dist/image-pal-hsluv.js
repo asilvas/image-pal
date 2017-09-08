@@ -82,7 +82,8 @@ module.exports = function () {
       minDensity = _ref.minDensity,
       maxDensity = _ref.maxDensity,
       cubicCells = _ref.cubicCells,
-      otherOptions = _objectWithoutProperties(_ref, ['hasAlpha', 'maxColors', 'minDensity', 'maxDensity', 'cubicCells']);
+      mean = _ref.mean,
+      otherOptions = _objectWithoutProperties(_ref, ['hasAlpha', 'maxColors', 'minDensity', 'maxDensity', 'cubicCells', 'mean']);
 
   if (typeof hasAlpha !== 'boolean') throw new Error('options.hasAlpha is required');
 
@@ -91,7 +92,8 @@ module.exports = function () {
     maxColors: Math.min(Math.max(1, maxColors), 20) || 10,
     minDensity: Math.min(Math.max(0.001, minDensity), 1) || 0.005,
     //maxDensity: maxDensity === false ? false : (Math.min(Math.max(0.001, maxDensity), 1) || false),
-    cubicCells: Math.min(Math.max(3, cubicCells), 4) || 4
+    cubicCells: Math.min(Math.max(3, cubicCells), 4) || 4,
+    mean: mean === false ? false : true
   }, otherOptions);
 
   return options;
@@ -110,6 +112,8 @@ module.exports = function (imageData, _ref) {
       minDensity = _ref.minDensity,
       maxDensity = _ref.maxDensity,
       cubicCells = _ref.cubicCells,
+      mean = _ref.mean,
+      applyColor = _ref.applyColor,
       colorPlacer = _ref.colorPlacer;
 
   // pre-allocate cells3d[x][y][z]
@@ -144,6 +148,7 @@ module.exports = function (imageData, _ref) {
       alpha: hasAlpha ? imageData[byte + 3] : 255
     };
 
+    if (applyColor) applyColor(color); // apply any color logic, if any
     var cellInfo = findCell(colorPlacer(color), cubicCells);
     cells3d[cellInfo.x][cellInfo.y][cellInfo.z].push(color);
   }
@@ -182,19 +187,35 @@ module.exports = function (imageData, _ref) {
     cellDensities = cellDensities.slice(0, maxColors);
   }
 
-  // with remaining cells that match critera, extract median colors
-  var medianColors = cellDensities.map(function (cellData) {
-    var colorIdx = Math.floor(cellData.colors.length / 2);
-    var medianColor = cellData.colors[colorIdx];
+  // with remaining cells that match critera, extract mean or median colors
+  var palette = cellDensities.map(function (cellData) {
+    if (mean) {
+      // apply mean calculations
+      var sumRgb = cellData.colors.reduce(function (state, c) {
+        state.r += c.rgb[0];
+        state.g += c.rgb[1];
+        state.b += c.rgb[2];
+        return state;
+      }, { r: 0, g: 0, b: 0 });
+      var len = cellData.colors.length;
+      color = {
+        rgb: [Math.min(255, Math.round(sumRgb.r / len)), Math.min(255, Math.round(sumRgb.g / len)), Math.min(255, Math.round(sumRgb.b / len))],
+        alpha: cellData.colors[0].alpha // dumb alpha copy
+      };
+      if (applyColor) applyColor(color); // update if color applicator provided
+    } else {
+      // grab median color
+      color = cellData.colors[Math.floor(cellData.colors.length / 2)];
+    }
 
     // attach hex colors for final palette
-    medianColor.hex = rgbToHex(medianColor.rgb[0], medianColor.rgb[1], medianColor.rgb[2]);
-    medianColor.density = cellData.density;
+    color.hex = rgbToHex(color.rgb[0], color.rgb[1], color.rgb[2]);
+    color.density = cellData.density;
 
-    return medianColor;
+    return color;
   });
 
-  return medianColors;
+  return palette;
 };
 
 function findCell(placement, cubicCells) {
@@ -249,17 +270,22 @@ var _require = __webpack_require__(6),
     rgbToHsluv = _require.rgbToHsluv;
 
 module.exports = function (imageData, _ref) {
-  var colorPlacer = _ref.colorPlacer,
-      options = _objectWithoutProperties(_ref, ['colorPlacer']);
+  var applyColor = _ref.applyColor,
+      colorPlacer = _ref.colorPlacer,
+      options = _objectWithoutProperties(_ref, ['applyColor', 'colorPlacer']);
 
   var opts = _extends({
+    applyColor: applyColor || hsluvColor,
     colorPlacer: colorPlacer || hsluvColorPlacer
   }, getOptions(options));
   return getColors(imageData, opts);
 };
 
-function hsluvColorPlacer(c) {
+function hsluvColor(c) {
   c.hsluv = rgbToHsluv([c.rgb[0] / 256, c.rgb[1] / 256, c.rgb[2] / 256]);
+}
+
+function hsluvColorPlacer(c) {
   var tooLightOrDark = c.hsluv[2] < 5 || c.hsluv[2] > 95;
   return {
     x: tooLightOrDark ? 0 : c.hsluv[0] / 360,

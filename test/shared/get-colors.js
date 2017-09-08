@@ -35,5 +35,21 @@ describe('#lib/shared/get-colors.js', function () {
     expect(ret.length).to.equal(0);
     expect(options.colorPlacer).to.have.not.been.called;
   });
+
+  it('median', function () {
+    bytes = [0, 0, 0, 12, 12, 12, 18, 18, 18];
+    options.mean = false;
+    ret = lib(bytes, getOptions(options));
+    expect(ret.length).to.equal(1);
+    expect(ret[0].rgb).to.be.deep.equal([12, 12, 12]);
+  });
+
+  it('mean', function () {
+    bytes = [0, 0, 0, 12, 12, 12, 18, 18, 18];
+    options.mean = true;
+    ret = lib(bytes, getOptions(options));
+    expect(ret.length).to.equal(1);
+    expect(ret[0].rgb).to.be.deep.equal([10, 10, 10]);
+  });
   
 });

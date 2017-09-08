@@ -48,6 +48,7 @@ server-only solutions.
 | maxColors | Number | `10` | Maximum size of colors to return. *Only one* is garuanteed |
 | minDensity | Number | `0.005` | Minimum cell density (0.5%) required to be considered a valid palette color |
 | cubicCells | Number | `4` | Number of cells per dimension in 3d space. Higher number of cells increases cpu time but can be useful if you want to return a large palette (greater than 10 maxColors). Only (3^3=27) or (4^3=64) supported |
+| mean | Boolean | `true` | By default the mean color will be computed which is generally desired. If set to `false` the median color will be selected. |
 
 
 ## Performance
