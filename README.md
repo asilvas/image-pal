@@ -49,6 +49,7 @@ server-only solutions.
 | minDensity | Number | `0.005` | Minimum cell density (0.5%) required to be considered a valid palette color |
 | cubicCells | Number | `4` | Number of cells per dimension in 3d space. Higher number of cells increases cpu time but can be useful if you want to return a large palette (greater than 10 maxColors). Only (3^3=27) or (4^3=64) supported |
 | mean | Boolean | `true` | By default the mean color will be computed which is generally desired. If set to `false` the median color will be selected. |
+| order | String | `distance` | Order of the returned color palette. By default will be ordered based on the distance between colors. Or `density` if cell density is desired. |
 
 
 ## Performance
@@ -65,11 +66,11 @@ It's quite simple to leverage a different color space or a variation of the prov
   
   function rgbColorPlacer(c) {
     // instead, I could convert RGB to an alternate color space, OR change the placement logic within the RGB spectrum
-    return {
-      x: c.rgb[0] / 256, // 0-1
-      y: c.rgb[1] / 256, // 0-1
-      z: c.rgb[2] / 256 // 0-1
-    };
+    return [
+      c.rgb[0] / 256, // x=0-1
+      c.rgb[1] / 256, // y=0-1
+      c.rgb[2] / 256 // z=0-1
+    ];
   }
 
   const colors = getColors(myImageBytes, { colorPlacer: rgbColorPlacer });
