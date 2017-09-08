@@ -36,16 +36,12 @@ describe('#lib/rgb.js', function () {
 
   it('Leverage linear split rgbColorPlacer by default', function () {
     bytes = [0, 100, 255];
-    options.colorPlacer = sinon.stub().returns({
-      x: 0,
-      y: 0,
-      z: 0
-    });
+    options.colorPlacer = sinon.stub().returns([ 0, 0, 0 ]);
     ret = lib(bytes, options);
     expect(ret.length).to.equal(1);
     expect(ret[0].hex).to.equal('#0064ff');
     expect(ret[0].density).to.equal(1);
-    expect(options.colorPlacer).to.have.been.calledOnce;
+    expect(options.colorPlacer).to.have.been.calledTwice;
   });
   
   it('adhere to maxColors', function () {

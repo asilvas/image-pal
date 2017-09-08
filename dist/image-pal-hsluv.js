@@ -80,20 +80,21 @@ module.exports = function () {
   var hasAlpha = _ref.hasAlpha,
       maxColors = _ref.maxColors,
       minDensity = _ref.minDensity,
-      maxDensity = _ref.maxDensity,
       cubicCells = _ref.cubicCells,
       mean = _ref.mean,
-      otherOptions = _objectWithoutProperties(_ref, ['hasAlpha', 'maxColors', 'minDensity', 'maxDensity', 'cubicCells', 'mean']);
+      order = _ref.order,
+      otherOptions = _objectWithoutProperties(_ref, ['hasAlpha', 'maxColors', 'minDensity', 'cubicCells', 'mean', 'order']);
 
   if (typeof hasAlpha !== 'boolean') throw new Error('options.hasAlpha is required');
 
   var options = _extends({
     hasAlpha: hasAlpha,
-    maxColors: Math.min(Math.max(1, maxColors), 20) || 10,
+    maxColors: Math.min(Math.max(1, maxColors), 32) || 10,
     minDensity: Math.min(Math.max(0.001, minDensity), 1) || 0.005,
     //maxDensity: maxDensity === false ? false : (Math.min(Math.max(0.001, maxDensity), 1) || false),
     cubicCells: Math.min(Math.max(3, cubicCells), 4) || 4,
-    mean: mean === false ? false : true
+    mean: mean === false ? false : true,
+    order: order === 'density' ? order : 'distance'
   }, otherOptions);
 
   return options;
@@ -110,9 +111,9 @@ module.exports = function (imageData, _ref) {
   var hasAlpha = _ref.hasAlpha,
       maxColors = _ref.maxColors,
       minDensity = _ref.minDensity,
-      maxDensity = _ref.maxDensity,
       cubicCells = _ref.cubicCells,
       mean = _ref.mean,
+      order = _ref.order,
       applyColor = _ref.applyColor,
       colorPlacer = _ref.colorPlacer;
 
@@ -141,16 +142,16 @@ module.exports = function (imageData, _ref) {
   var byte = void 0,
       color = void 0;
   var pixels = Math.floor(imageData.length / bytesPerPixel);
-  for (i = 0; i < pixels; i++) {
-    byte = i * bytesPerPixel;
+  for (byte = 0, i = 0; i < pixels; byte += bytesPerPixel, i++) {
     color = {
       rgb: [imageData[byte], imageData[byte + 1], imageData[byte + 2]],
       alpha: hasAlpha ? imageData[byte + 3] : 255
     };
 
     if (applyColor) applyColor(color); // apply any color logic, if any
-    var cellInfo = findCell(colorPlacer(color), cubicCells);
-    cells3d[cellInfo.x][cellInfo.y][cellInfo.z].push(color);
+    color.xyz = colorPlacer(color);
+    var xyz = findCell(color.xyz, cubicCells);
+    cells3d[xyz[0]][xyz[1]][xyz[2]].push(color);
   }
 
   // sort cells
@@ -179,8 +180,7 @@ module.exports = function (imageData, _ref) {
     // 3. Meets the maxDensity requirement
     // 4. Never filter more than the first matching cell
     cellDensities = cellDensities.slice(1); // remove first
-  }
-  */
+  }*/
 
   // adhere to maxColors
   if (cellDensities.length > maxColors) {
@@ -203,6 +203,7 @@ module.exports = function (imageData, _ref) {
         alpha: cellData.colors[0].alpha // dumb alpha copy
       };
       if (applyColor) applyColor(color); // update if color applicator provided
+      color.xyz = colorPlacer(color); // re-calc placement in 3d space
     } else {
       // grab median color
       color = cellData.colors[Math.floor(cellData.colors.length / 2)];
@@ -211,19 +212,23 @@ module.exports = function (imageData, _ref) {
     // attach hex colors for final palette
     color.hex = rgbToHex(color.rgb[0], color.rgb[1], color.rgb[2]);
     color.density = cellData.density;
+    color.distance = (color.xyz[0] + color.xyz[1] + color.xyz[2]) / 3;
 
     return color;
   });
 
+  if (order === 'distance') {
+    // sort by distance
+    palette = palette.sort(function (a, b) {
+      return a.distance > b.distance ? -1 : a.distance < b.distance ? 1 : 0;
+    });
+  } // else, already sorted by density
+
   return palette;
 };
 
-function findCell(placement, cubicCells) {
-  return {
-    x: Math.max(0, Math.ceil(Math.min(placement.x, 1) * cubicCells) - 1),
-    y: Math.max(0, Math.ceil(Math.min(placement.y, 1) * cubicCells) - 1),
-    z: Math.max(0, Math.ceil(Math.min(placement.z, 1) * cubicCells) - 1)
-  };
+function findCell(xyz, cubicCells) {
+  return [Math.max(0, Math.ceil(Math.min(xyz[0], 1) * cubicCells) - 1), Math.max(0, Math.ceil(Math.min(xyz[1], 1) * cubicCells) - 1), Math.max(0, Math.ceil(Math.min(xyz[2], 1) * cubicCells) - 1)];
 }
 
 function componentToHex(c) {
@@ -286,12 +291,8 @@ function hsluvColor(c) {
 }
 
 function hsluvColorPlacer(c) {
-  var tooLightOrDark = c.hsluv[2] < 5 || c.hsluv[2] > 95;
-  return {
-    x: tooLightOrDark ? 0 : c.hsluv[0] / 360,
-    y: tooLightOrDark ? 0 : c.hsluv[1] / 100,
-    z: c.hsluv[2] / 100
-  };
+  var tooLightOrDark = c.hsluv[2] < 3 || c.hsluv[2] > 97;
+  return [tooLightOrDark ? 0 : c.hsluv[0] / 360, tooLightOrDark ? 0 : c.hsluv[1] / 100, c.hsluv[2] / 100];
 }
 
 /***/ }),

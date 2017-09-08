@@ -41,7 +41,7 @@ describe('#lib/shared/get-options.js', function () {
   
   it('default options', function () {
     ret = lib(options);
-    expect(ret).to.deep.equal({ hasAlpha: false, maxColors: 10, minDensity: 0.005, mean: true, cubicCells: 4 });
+    expect(ret).to.deep.equal({ hasAlpha: false, maxColors: 10, minDensity: 0.005, mean: true, cubicCells: 4, order: 'distance' });
   });
   
 });
