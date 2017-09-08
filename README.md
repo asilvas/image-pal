@@ -52,6 +52,13 @@ server-only solutions.
 | order | String | `distance` | Order of the returned color palette. By default will be ordered based on the distance between colors. Or `density` if cell density is desired. |
 
 
+### Logos
+
+In the case you're working with a logo where brand is everything, disabling `mean` to select the median color will avoid tampering with brand colors.
+
+`{ mean: false }`
+
+
 ## Performance
 
 While this library is light weight, if it's used with very large images it can still take a considerable amount of time. See [Helpers](#helpers) for high-performance production usage.

@@ -206,7 +206,14 @@ module.exports = function (imageData, _ref) {
       color.xyz = colorPlacer(color); // re-calc placement in 3d space
     } else {
       // grab median color
-      color = cellData.colors[Math.floor(cellData.colors.length / 2)];
+      // first we must sort based on distance
+      /* istanbul ignore next */
+      var colorsByDistance = cellData.colors.sort(function (a, b) {
+        return a.distance > b.distance ? -1 : a.distance < b.distance ? 1 : 0;
+      });
+
+      // now we can grab median
+      color = colorsByDistance[Math.floor(cellData.colors.length / 2)];
     }
 
     // attach hex colors for final palette
