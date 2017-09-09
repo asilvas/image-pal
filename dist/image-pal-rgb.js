@@ -150,6 +150,7 @@ module.exports = function (imageData, _ref) {
 
     if (applyColor) applyColor(color); // apply any color logic, if any
     color.xyz = colorPlacer(color);
+    color.distance = getDistance(color);
     var xyz = findCell(color.xyz, cubicCells);
     cells3d[xyz[0]][xyz[1]][xyz[2]].push(color);
   }
@@ -219,7 +220,7 @@ module.exports = function (imageData, _ref) {
     // attach hex colors for final palette
     color.hex = rgbToHex(color.rgb[0], color.rgb[1], color.rgb[2]);
     color.density = cellData.density;
-    color.distance = (color.xyz[0] + color.xyz[1] + color.xyz[2]) / 3;
+    color.distance = getDistance(color);
 
     return color;
   });
@@ -246,6 +247,19 @@ function componentToHex(c) {
 function rgbToHex(r, g, b) {
   return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
 }
+
+function getDistance(color) {
+  return color.distance = color.xyz[0] + color.xyz[1] * 10 + color.xyz[2] * 100;
+}
+
+// https://www.compuphase.com/cmetric.htm
+/*function distanceSorter(c1, c2) {
+  const rmean = ( c1.rgb[0] + c2.rgb[0] ) / 2;
+  const r = c1.rgb[0] - c2.rgb[0];
+  const g = c1.rgb[1] - c2.rgb[1];
+  const b = c1.rgb[2] - c2.rgb[2];
+  return Math.sqrt((((512+rmean)*r*r)>>8) + 4*g*g + (((767-rmean)*b*b)>>8));
+}*/
 
 /***/ }),
 /* 2 */
