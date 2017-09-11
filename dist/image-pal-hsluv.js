@@ -312,7 +312,7 @@ function hsluvColor(c) {
 }
 
 function hsluvColorPlacer(c) {
-  var tooLightOrDark = c.hsluv[2] < 3 || c.hsluv[2] > 97;
+  var tooLightOrDark = c.hsluv[2] < 8 || c.hsluv[2] > 97;
   return [tooLightOrDark ? 0 : c.hsluv[0] / 360, tooLightOrDark ? 0 : c.hsluv[1] / 100, c.hsluv[2] / 100];
 }
 
