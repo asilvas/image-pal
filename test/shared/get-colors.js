@@ -6,10 +6,10 @@ const sinon = require('sinon');
 const sinonChai = require("sinon-chai");
 chai.use(sinonChai);
 const expect = chai.expect;
-const lib = require('../../lib/shared/get-colors');
-const getOptions = require('../../lib/shared/get-options');
+const lib = require('../../src/shared/get-colors');
+const getOptions = require('../../src/shared/get-options');
 
-describe('#lib/shared/get-colors.js', function () {
+describe('#src/shared/get-colors.js', function () {
 
   let options, bytes, ret;
 

@@ -6,9 +6,9 @@ const sinon = require('sinon');
 const sinonChai = require("sinon-chai");
 chai.use(sinonChai);
 const expect = chai.expect;
-const lib = require('../../lib/shared/get-options');
+const lib = require('../../src/shared/get-options');
 
-describe('#lib/shared/get-options.js', function () {
+describe('#src/shared/get-options.js', function () {
 
   let options, ret;
 

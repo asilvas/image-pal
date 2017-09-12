@@ -1,15 +1,17 @@
 {
   "name": "image-pal",
-  "version": "1.1.3",
+  "version": "1.2.0",
   "description": "Retrieve human perceivable palette of colors from images leveraging color quantization",
   "main": "lib/hsluv.js",
   "directories": {
-    "lib": "lib"
+    "lib": "lib",
+    "src": "src"
   },
   "scripts": {
+    "build": "babel src --out-dir lib",
     "check-cov": "istanbul check-coverage --statements 100 --functions 100 --branches 100 --lines 100 || node scripts/launch-coverage-in-browser",
     "dist": "webpack --config ./webpack/config-prod.js && webpack --config ./webpack/config-dev.js",
-    "prepublish": "npm run dist",
+    "prepublish": "npm run test && npm run build && npm run dist",
     "report": "istanbul report cobertura && istanbul report lcov",
     "test": "npm run test-and-check && npm outdated",
     "test-and-check": "npm run unit && npm run report && npm run check-cov",
@@ -35,13 +37,15 @@
     "hsluv": "0.0.1"
   },
   "devDependencies": {
+    "babel-cli": "^6.26.0",
     "babel-core": "^6.26.0",
     "babel-loader": "^7.1.2",
+    "babel-plugin-syntax-object-rest-spread": "^6.13.0",
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-preset-env": "^1.6.0",
     "chai": "^4.1.2",
     "istanbul": "^0.4.5",
-    "mocha": "^3.5.0",
+    "mocha": "^3.5.3",
     "mocha-istanbul": "^0.3.0",
     "open": "0.0.5",
     "should": "^13.0.1",

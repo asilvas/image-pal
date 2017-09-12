@@ -6,9 +6,9 @@ const sinon = require('sinon');
 const sinonChai = require("sinon-chai");
 chai.use(sinonChai);
 const expect = chai.expect;
-const lib = require('../lib/rgb');
+const lib = require('../src/rgb');
 
-describe('#lib/rgb.js', function () {
+describe('#src/rgb.js', function () {
 
   let ret, bytes, options;
 

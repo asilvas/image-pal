@@ -72,12 +72,15 @@
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
+function _objectWithoutProperties(obj, keys) {
+  var target = {};for (var i in obj) {
+    if (keys.indexOf(i) >= 0) continue;if (!Object.prototype.hasOwnProperty.call(obj, i)) continue;target[i] = obj[i];
+  }return target;
+}
 
 module.exports = function () {
-  var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-
-  var hasAlpha = _ref.hasAlpha,
+  var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+      hasAlpha = _ref.hasAlpha,
       maxColors = _ref.maxColors,
       minDensity = _ref.minDensity,
       cubicCells = _ref.cubicCells,
@@ -227,6 +230,7 @@ module.exports = function (imageData, _ref) {
 
   if (order === 'distance') {
     // sort by distance
+    /* istanbul ignore next */
     palette = palette.sort(function (a, b) {
       return a.distance > b.distance ? -1 : a.distance < b.distance ? 1 : 0;
     });
@@ -285,7 +289,11 @@ window.imagePalRgb = _rgb2.default;
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
+function _objectWithoutProperties(obj, keys) {
+  var target = {};for (var i in obj) {
+    if (keys.indexOf(i) >= 0) continue;if (!Object.prototype.hasOwnProperty.call(obj, i)) continue;target[i] = obj[i];
+  }return target;
+}
 
 var getOptions = __webpack_require__(0);
 var getColors = __webpack_require__(1);
