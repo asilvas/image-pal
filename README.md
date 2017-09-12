@@ -33,7 +33,7 @@ Depending how you intend to access the images, there are a few high-performance 
 
 * [image-pal-canvas](https://github.com/asilvas/image-pal-canvas) - A browser based implementation that leverages `Image` and `Canvas` for fast palette generation.
 * [image-pal-sharp](https://github.com/asilvas/image-pal-sharp) - A Node.js based implementation that leverages `Sharp` and `libvips` for fast palette generation.
-* image-steam - (COMING SOON) An Image API with built-in support, already optimized for you.
+* [image-steam](https://github.com/asilvas/node-image-steam) - An Image API with built-in support, already optimized for you.
 
 By leveraging browser and server implementations you can provide consistent (though NOT identical) palette generation across your stack. Generated palettes will still vary
 slightly as the image resize operations vary in algorithm across browsers and server implementations. If consistency is critical you might consider one of the
