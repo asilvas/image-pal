@@ -70,7 +70,15 @@
 "use strict";
 
 
-var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+var _extends = Object.assign || function (target) {
+  for (var i = 1; i < arguments.length; i++) {
+    var source = arguments[i];for (var key in source) {
+      if (Object.prototype.hasOwnProperty.call(source, key)) {
+        target[key] = source[key];
+      }
+    }
+  }return target;
+};
 
 function _objectWithoutProperties(obj, keys) {
   var target = {};for (var i in obj) {
@@ -79,8 +87,9 @@ function _objectWithoutProperties(obj, keys) {
 }
 
 module.exports = function () {
-  var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
-      hasAlpha = _ref.hasAlpha,
+  var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+  var hasAlpha = _ref.hasAlpha,
       maxColors = _ref.maxColors,
       minDensity = _ref.minDensity,
       cubicCells = _ref.cubicCells,
@@ -289,7 +298,15 @@ window.imagePalHsluv = _hsluv2.default;
 "use strict";
 
 
-var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+var _extends = Object.assign || function (target) {
+  for (var i = 1; i < arguments.length; i++) {
+    var source = arguments[i];for (var key in source) {
+      if (Object.prototype.hasOwnProperty.call(source, key)) {
+        target[key] = source[key];
+      }
+    }
+  }return target;
+};
 
 function _objectWithoutProperties(obj, keys) {
   var target = {};for (var i in obj) {

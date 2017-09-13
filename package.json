@@ -1,6 +1,6 @@
 {
   "name": "image-pal",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Retrieve human perceivable palette of colors from images leveraging color quantization",
   "main": "lib/hsluv.js",
   "directories": {
