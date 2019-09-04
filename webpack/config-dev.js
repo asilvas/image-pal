@@ -1,6 +1,7 @@
 const path = require('path');
 
 module.exports = {
+  mode: 'development',
   entry: {
     rgb: './webpack/rgb.js',
     hsluv: './webpack/hsluv.js'
@@ -17,8 +18,8 @@ module.exports = {
         use: {
           loader: 'babel-loader',
           options: {
-            presets: ['env'],
-            plugins: [require('babel-plugin-transform-object-rest-spread')]
+            presets: ['@babel/preset-env'],
+            plugins: [require('@babel/plugin-proposal-object-rest-spread')]
           }
         }
       }

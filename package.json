@@ -37,12 +37,11 @@
     "hsluv": "0.0.3"
   },
   "devDependencies": {
-    "babel-cli": "^6.26.0",
-    "babel-core": "^6.26.3",
+    "@babel/cli": "^7.5.5",
+    "@babel/core": "^7.5.5",
+    "@babel/plugin-proposal-object-rest-spread": "^7.5.5",
+    "@babel/preset-env": "^7.5.5",
     "babel-loader": "^8.0.6",
-    "babel-plugin-syntax-object-rest-spread": "^6.13.0",
-    "babel-plugin-transform-object-rest-spread": "^6.26.0",
-    "babel-preset-env": "^1.7.0",
     "chai": "^4.2.0",
     "istanbul": "^0.4.5",
     "mocha": "^6.2.0",
@@ -51,7 +50,7 @@
     "should": "^13.2.3",
     "sinon": "^7.4.2",
     "sinon-chai": "^3.3.0",
-    "uglifyjs-webpack-plugin": "^2.2.0",
-    "webpack": "^4.39.3"
+    "webpack": "^4.39.3",
+    "webpack-cli": "^3.3.7"
   }
 }

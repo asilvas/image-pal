@@ -36,12 +36,32 @@
 /******/ 	// define getter function for harmony exports
 /******/ 	__webpack_require__.d = function(exports, name, getter) {
 /******/ 		if(!__webpack_require__.o(exports, name)) {
-/******/ 			Object.defineProperty(exports, name, {
-/******/ 				configurable: false,
-/******/ 				enumerable: true,
-/******/ 				get: getter
-/******/ 			});
+/******/ 			Object.defineProperty(exports, name, { enumerable: true, get: getter });
 /******/ 		}
+/******/ 	};
+/******/
+/******/ 	// define __esModule on exports
+/******/ 	__webpack_require__.r = function(exports) {
+/******/ 		if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 			Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 		}
+/******/ 		Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 	};
+/******/
+/******/ 	// create a fake namespace object
+/******/ 	// mode & 1: value is a module id, require it
+/******/ 	// mode & 2: merge all properties of value into the ns
+/******/ 	// mode & 4: return value when already ns object
+/******/ 	// mode & 8|1: behave like require
+/******/ 	__webpack_require__.t = function(value, mode) {
+/******/ 		if(mode & 1) value = __webpack_require__(value);
+/******/ 		if(mode & 8) return value;
+/******/ 		if((mode & 4) && typeof value === 'object' && value && value.__esModule) return value;
+/******/ 		var ns = Object.create(null);
+/******/ 		__webpack_require__.r(ns);
+/******/ 		Object.defineProperty(ns, 'default', { enumerable: true, value: value });
+/******/ 		if(mode & 2 && typeof value != 'string') for(var key in value) __webpack_require__.d(ns, key, function(key) { return value[key]; }.bind(null, key));
+/******/ 		return ns;
 /******/ 	};
 /******/
 /******/ 	// getDefaultExport function for compatibility with non-harmony modules
@@ -59,61 +79,144 @@
 /******/ 	// __webpack_public_path__
 /******/ 	__webpack_require__.p = "";
 /******/
+/******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 4);
+/******/ 	return __webpack_require__(__webpack_require__.s = "./webpack/hsluv.js");
 /******/ })
 /************************************************************************/
-/******/ ([
-/* 0 */
+/******/ ({
+
+/***/ "./lib/hsluv.js":
+/*!**********************!*\
+  !*** ./lib/hsluv.js ***!
+  \**********************/
+/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _extends = Object.assign || function (target) {
-  for (var i = 1; i < arguments.length; i++) {
-    var source = arguments[i];for (var key in source) {
-      if (Object.prototype.hasOwnProperty.call(source, key)) {
-        target[key] = source[key];
-      }
-    }
-  }return target;
-};
+function ownKeys(object, enumerableOnly) {
+  var keys = Object.keys(object);
 
-function _objectWithoutProperties(obj, keys) {
-  var target = {};for (var i in obj) {
-    if (keys.indexOf(i) >= 0) continue;if (!Object.prototype.hasOwnProperty.call(obj, i)) continue;target[i] = obj[i];
-  }return target;
+  if (Object.getOwnPropertySymbols) {
+    var symbols = Object.getOwnPropertySymbols(object);
+    if (enumerableOnly) symbols = symbols.filter(function (sym) {
+      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+    });
+    keys.push.apply(keys, symbols);
+  }
+
+  return keys;
 }
 
-module.exports = function () {
-  var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+function _objectSpread(target) {
+  for (var i = 1; i < arguments.length; i++) {
+    var source = arguments[i] != null ? arguments[i] : {};
 
-  var hasAlpha = _ref.hasAlpha,
-      maxColors = _ref.maxColors,
-      minDensity = _ref.minDensity,
-      cubicCells = _ref.cubicCells,
-      mean = _ref.mean,
-      order = _ref.order,
-      otherOptions = _objectWithoutProperties(_ref, ['hasAlpha', 'maxColors', 'minDensity', 'cubicCells', 'mean', 'order']);
+    if (i % 2) {
+      ownKeys(source, true).forEach(function (key) {
+        _defineProperty(target, key, source[key]);
+      });
+    } else if (Object.getOwnPropertyDescriptors) {
+      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
+    } else {
+      ownKeys(source).forEach(function (key) {
+        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+      });
+    }
+  }
 
-  if (typeof hasAlpha !== 'boolean') throw new Error('options.hasAlpha is required');
+  return target;
+}
 
-  var options = _extends({
-    hasAlpha: hasAlpha,
-    maxColors: Math.min(Math.max(1, maxColors), 32) || 10,
-    minDensity: Math.min(Math.max(0.001, minDensity), 1) || 0.005,
-    //maxDensity: maxDensity === false ? false : (Math.min(Math.max(0.001, maxDensity), 1) || false),
-    cubicCells: Math.min(Math.max(3, cubicCells), 4) || 4,
-    mean: mean === false ? false : true,
-    order: order === 'density' ? order : 'distance'
-  }, otherOptions);
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
 
-  return options;
+  return obj;
+}
+
+function _objectWithoutProperties(source, excluded) {
+  if (source == null) return {};
+
+  var target = _objectWithoutPropertiesLoose(source, excluded);
+
+  var key, i;
+
+  if (Object.getOwnPropertySymbols) {
+    var sourceSymbolKeys = Object.getOwnPropertySymbols(source);
+
+    for (i = 0; i < sourceSymbolKeys.length; i++) {
+      key = sourceSymbolKeys[i];
+      if (excluded.indexOf(key) >= 0) continue;
+      if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue;
+      target[key] = source[key];
+    }
+  }
+
+  return target;
+}
+
+function _objectWithoutPropertiesLoose(source, excluded) {
+  if (source == null) return {};
+  var target = {};
+  var sourceKeys = Object.keys(source);
+  var key, i;
+
+  for (i = 0; i < sourceKeys.length; i++) {
+    key = sourceKeys[i];
+    if (excluded.indexOf(key) >= 0) continue;
+    target[key] = source[key];
+  }
+
+  return target;
+}
+
+var getOptions = __webpack_require__(/*! ./shared/get-options */ "./lib/shared/get-options.js");
+
+var getColors = __webpack_require__(/*! ./shared/get-colors */ "./lib/shared/get-colors.js");
+
+var _require = __webpack_require__(/*! hsluv */ "./node_modules/hsluv/hsluv.js"),
+    rgbToHsluv = _require.rgbToHsluv;
+
+module.exports = function (imageData, _ref) {
+  var applyColor = _ref.applyColor,
+      colorPlacer = _ref.colorPlacer,
+      options = _objectWithoutProperties(_ref, ["applyColor", "colorPlacer"]);
+
+  var opts = _objectSpread({
+    applyColor: applyColor || hsluvColor,
+    colorPlacer: colorPlacer || hsluvColorPlacer
+  }, getOptions(options));
+
+  return getColors(imageData, opts);
 };
 
+function hsluvColor(c) {
+  c.hsluv = rgbToHsluv([c.rgb[0] / 256, c.rgb[1] / 256, c.rgb[2] / 256]);
+}
+
+function hsluvColorPlacer(c) {
+  var tooLightOrDark = c.hsluv[2] < 8 || c.hsluv[2] > 97;
+  return [tooLightOrDark ? 0 : c.hsluv[0] / 360, tooLightOrDark ? 0 : c.hsluv[1] / 100, c.hsluv[2] / 100];
+}
+
 /***/ }),
-/* 1 */
+
+/***/ "./lib/shared/get-colors.js":
+/*!**********************************!*\
+  !*** ./lib/shared/get-colors.js ***!
+  \**********************************/
+/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -127,64 +230,59 @@ module.exports = function (imageData, _ref) {
       mean = _ref.mean,
       order = _ref.order,
       applyColor = _ref.applyColor,
-      colorPlacer = _ref.colorPlacer;
-
-  // pre-allocate cells3d[x][y][z]
+      colorPlacer = _ref.colorPlacer; // pre-allocate cells3d[x][y][z]
   // pre-allocate cells[i]
-  var x = void 0,
-      y = void 0,
-      z = void 0,
-      i = void 0,
-      cell = void 0;
+
+  var x, y, z, i, cell;
   var cells3d = new Array(cubicCells);
   var cells = new Array(Math.pow(cubicCells, 3));
+
   for (x = 0, i = 0; x < cubicCells; x++) {
     cells3d[x] = new Array(cubicCells);
+
     for (y = 0; y < cubicCells; y++) {
       cells3d[x][y] = new Array(cubicCells);
+
       for (z = 0; z < cubicCells; z++, i++) {
         cells3d[x][y][z] = cells[i] = [];
       }
     }
   }
 
-  var bytesPerPixel = hasAlpha ? 4 : 3;
+  var bytesPerPixel = hasAlpha ? 4 : 3; // color placement
 
-  // color placement
-  var byte = void 0,
-      color = void 0;
+  var _byte, color;
+
   var pixels = Math.floor(imageData.length / bytesPerPixel);
-  for (byte = 0, i = 0; i < pixels; byte += bytesPerPixel, i++) {
-    color = {
-      rgb: [imageData[byte], imageData[byte + 1], imageData[byte + 2]],
-      alpha: hasAlpha ? imageData[byte + 3] : 255
-    };
 
+  for (_byte = 0, i = 0; i < pixels; _byte += bytesPerPixel, i++) {
+    color = {
+      rgb: [imageData[_byte], imageData[_byte + 1], imageData[_byte + 2]],
+      alpha: hasAlpha ? imageData[_byte + 3] : 255
+    };
     if (applyColor) applyColor(color); // apply any color logic, if any
+
     color.xyz = colorPlacer(color);
     color.distance = getDistance(color);
     var xyz = findCell(color.xyz, cubicCells);
     cells3d[xyz[0]][xyz[1]][xyz[2]].push(color);
-  }
+  } // sort cells
 
-  // sort cells
+
   cells.sort(function (a, b) {
     return a.length > b.length ? -1 : a.length < b.length ? 1 : 0;
-  });
+  }); // compute cell densities
 
-  // compute cell densities
   var cellDensities = cells.map(function (colors) {
     return {
       density: colors.length / pixels,
       colors: colors
     };
-  });
+  }); // remove cells that don't meet min criteria
 
-  // remove cells that don't meet min criteria
   cellDensities = cellDensities.filter(function (cellData) {
     return cellData.density >= minDensity;
   });
-
   /* support for maxDensity is disabled for now -- not working as intended. might need a per-colour-space filter option
   if (maxDensity && cellDensities.length > 1 && cellDensities[0].density >= maxDensity) {
     // only filter if:
@@ -194,13 +292,13 @@ module.exports = function (imageData, _ref) {
     // 4. Never filter more than the first matching cell
     cellDensities = cellDensities.slice(1); // remove first
   }*/
-
   // adhere to maxColors
+
   if (cellDensities.length > maxColors) {
     cellDensities = cellDensities.slice(0, maxColors);
-  }
+  } // with remaining cells that match critera, extract mean or median colors
 
-  // with remaining cells that match critera, extract mean or median colors
+
   var palette = cellDensities.map(function (cellData) {
     if (mean) {
       // apply mean calculations
@@ -209,41 +307,48 @@ module.exports = function (imageData, _ref) {
         state.g += c.rgb[1];
         state.b += c.rgb[2];
         return state;
-      }, { r: 0, g: 0, b: 0 });
+      }, {
+        r: 0,
+        g: 0,
+        b: 0
+      });
       var len = cellData.colors.length;
       color = {
         rgb: [Math.min(255, Math.round(sumRgb.r / len)), Math.min(255, Math.round(sumRgb.g / len)), Math.min(255, Math.round(sumRgb.b / len))],
         alpha: cellData.colors[0].alpha // dumb alpha copy
+
       };
       if (applyColor) applyColor(color); // update if color applicator provided
+
       color.xyz = colorPlacer(color); // re-calc placement in 3d space
     } else {
       // grab median color
       // first we must sort based on distance
+
       /* istanbul ignore next */
       var colorsByDistance = cellData.colors.sort(function (a, b) {
         return a.distance > b.distance ? -1 : a.distance < b.distance ? 1 : 0;
-      });
+      }); // now we can grab median
 
-      // now we can grab median
       color = colorsByDistance[Math.floor(cellData.colors.length / 2)];
-    }
+    } // attach hex colors for final palette
 
-    // attach hex colors for final palette
+
     color.hex = rgbToHex(color.rgb[0], color.rgb[1], color.rgb[2]);
     color.density = cellData.density;
     color.distance = getDistance(color);
-
     return color;
   });
 
   if (order === 'distance') {
     // sort by distance
+
     /* istanbul ignore next */
     palette = palette.sort(function (a, b) {
       return a.distance > b.distance ? -1 : a.distance < b.distance ? 1 : 0;
     });
   } // else, already sorted by density
+
 
   return palette;
 };
@@ -263,9 +368,8 @@ function rgbToHex(r, g, b) {
 
 function getDistance(color) {
   return color.distance = color.xyz[0] + color.xyz[1] * 10 + color.xyz[2] * 100;
-}
+} // https://www.compuphase.com/cmetric.htm
 
-// https://www.compuphase.com/cmetric.htm
 /*function distanceSorter(c1, c2) {
   const rmean = ( c1.rgb[0] + c2.rgb[0] ) / 2;
   const r = c1.rgb[0] - c2.rgb[0];
@@ -275,110 +379,138 @@ function getDistance(color) {
 }*/
 
 /***/ }),
-/* 2 */,
-/* 3 */,
-/* 4 */
+
+/***/ "./lib/shared/get-options.js":
+/*!***********************************!*\
+  !*** ./lib/shared/get-options.js ***!
+  \***********************************/
+/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _hsluv = __webpack_require__(5);
+function ownKeys(object, enumerableOnly) {
+  var keys = Object.keys(object);
 
-var _hsluv2 = _interopRequireDefault(_hsluv);
+  if (Object.getOwnPropertySymbols) {
+    var symbols = Object.getOwnPropertySymbols(object);
+    if (enumerableOnly) symbols = symbols.filter(function (sym) {
+      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+    });
+    keys.push.apply(keys, symbols);
+  }
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+  return keys;
+}
 
-window.imagePalHsluv = _hsluv2.default;
-
-/***/ }),
-/* 5 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var _extends = Object.assign || function (target) {
+function _objectSpread(target) {
   for (var i = 1; i < arguments.length; i++) {
-    var source = arguments[i];for (var key in source) {
-      if (Object.prototype.hasOwnProperty.call(source, key)) {
-        target[key] = source[key];
-      }
+    var source = arguments[i] != null ? arguments[i] : {};
+
+    if (i % 2) {
+      ownKeys(source, true).forEach(function (key) {
+        _defineProperty(target, key, source[key]);
+      });
+    } else if (Object.getOwnPropertyDescriptors) {
+      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
+    } else {
+      ownKeys(source).forEach(function (key) {
+        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+      });
     }
-  }return target;
+  }
+
+  return target;
+}
+
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+function _objectWithoutProperties(source, excluded) {
+  if (source == null) return {};
+
+  var target = _objectWithoutPropertiesLoose(source, excluded);
+
+  var key, i;
+
+  if (Object.getOwnPropertySymbols) {
+    var sourceSymbolKeys = Object.getOwnPropertySymbols(source);
+
+    for (i = 0; i < sourceSymbolKeys.length; i++) {
+      key = sourceSymbolKeys[i];
+      if (excluded.indexOf(key) >= 0) continue;
+      if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue;
+      target[key] = source[key];
+    }
+  }
+
+  return target;
+}
+
+function _objectWithoutPropertiesLoose(source, excluded) {
+  if (source == null) return {};
+  var target = {};
+  var sourceKeys = Object.keys(source);
+  var key, i;
+
+  for (i = 0; i < sourceKeys.length; i++) {
+    key = sourceKeys[i];
+    if (excluded.indexOf(key) >= 0) continue;
+    target[key] = source[key];
+  }
+
+  return target;
+}
+
+module.exports = function () {
+  var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+  var hasAlpha = _ref.hasAlpha,
+      maxColors = _ref.maxColors,
+      minDensity = _ref.minDensity,
+      cubicCells = _ref.cubicCells,
+      mean = _ref.mean,
+      order = _ref.order,
+      otherOptions = _objectWithoutProperties(_ref, ["hasAlpha", "maxColors", "minDensity", "cubicCells", "mean", "order"]);
+
+  if (typeof hasAlpha !== 'boolean') throw new Error('options.hasAlpha is required');
+
+  var options = _objectSpread({
+    hasAlpha: hasAlpha,
+    maxColors: Math.min(Math.max(1, maxColors), 32) || 10,
+    minDensity: Math.min(Math.max(0.001, minDensity), 1) || 0.005,
+    //maxDensity: maxDensity === false ? false : (Math.min(Math.max(0.001, maxDensity), 1) || false),
+    cubicCells: Math.min(Math.max(3, cubicCells), 4) || 4,
+    mean: mean === false ? false : true,
+    order: order === 'density' ? order : 'distance'
+  }, otherOptions);
+
+  return options;
 };
-
-function _objectWithoutProperties(obj, keys) {
-  var target = {};for (var i in obj) {
-    if (keys.indexOf(i) >= 0) continue;if (!Object.prototype.hasOwnProperty.call(obj, i)) continue;target[i] = obj[i];
-  }return target;
-}
-
-var getOptions = __webpack_require__(0);
-var getColors = __webpack_require__(1);
-
-var _require = __webpack_require__(6),
-    rgbToHsluv = _require.rgbToHsluv;
-
-module.exports = function (imageData, _ref) {
-  var applyColor = _ref.applyColor,
-      colorPlacer = _ref.colorPlacer,
-      options = _objectWithoutProperties(_ref, ['applyColor', 'colorPlacer']);
-
-  var opts = _extends({
-    applyColor: applyColor || hsluvColor,
-    colorPlacer: colorPlacer || hsluvColorPlacer
-  }, getOptions(options));
-  return getColors(imageData, opts);
-};
-
-function hsluvColor(c) {
-  c.hsluv = rgbToHsluv([c.rgb[0] / 256, c.rgb[1] / 256, c.rgb[2] / 256]);
-}
-
-function hsluvColorPlacer(c) {
-  var tooLightOrDark = c.hsluv[2] < 8 || c.hsluv[2] > 97;
-  return [tooLightOrDark ? 0 : c.hsluv[0] / 360, tooLightOrDark ? 0 : c.hsluv[1] / 100, c.hsluv[2] / 100];
-}
 
 /***/ }),
-/* 6 */
-/***/ (function(module, exports, __webpack_require__) {
 
-var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;(function() {
-var HxOverrides = function() { };
-HxOverrides.cca = function(s,index) {
-	var x = s.charCodeAt(index);
-	if(x != x) return undefined;
-	return x;
-};
-HxOverrides.substr = function(s,pos,len) {
-	if(pos != null && pos != 0 && len != null && len < 0) return "";
-	if(len == null) len = s.length;
-	if(pos < 0) {
-		pos = s.length + pos;
-		if(pos < 0) pos = 0;
-	} else if(len < 0) len = s.length + len - pos;
-	return s.substr(pos,len);
-};
-var Std = function() { };
-Std.parseInt = function(x) {
-	var v = parseInt(x,10);
-	if(v == 0 && (HxOverrides.cca(x,1) == 120 || HxOverrides.cca(x,1) == 88)) v = parseInt(x);
-	if(isNaN(v)) return null;
-	return v;
-};
-var StringTools = function() { };
-StringTools.hex = function(n,digits) {
-	var s = "";
-	var hexChars = "0123456789ABCDEF";
-	do {
-		s = hexChars.charAt(n & 15) + s;
-		n >>>= 4;
-	} while(n > 0);
-	if(digits != null) while(s.length < digits) s = "0" + s;
-	return s;
-};
+/***/ "./node_modules/hsluv/hsluv.js":
+/*!*************************************!*\
+  !*** ./node_modules/hsluv/hsluv.js ***!
+  \*************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+// Generated by Haxe 3.4.4
 var hsluv = hsluv || {};
 hsluv.Geometry = function() { };
 hsluv.Geometry.intersectLineLine = function(a,b) {
@@ -411,8 +543,7 @@ hsluv.Hsluv = function() { };
 hsluv.Hsluv.getBounds = function(L) {
 	var result = [];
 	var sub1 = Math.pow(L + 16,3) / 1560896;
-	var sub2;
-	if(sub1 > hsluv.Hsluv.epsilon) sub2 = sub1; else sub2 = L / hsluv.Hsluv.kappa;
+	var sub2 = sub1 > hsluv.Hsluv.epsilon ? sub1 : L / hsluv.Hsluv.kappa;
 	var _g = 0;
 	while(_g < 3) {
 		var c = _g++;
@@ -432,11 +563,12 @@ hsluv.Hsluv.getBounds = function(L) {
 };
 hsluv.Hsluv.maxSafeChromaForL = function(L) {
 	var bounds = hsluv.Hsluv.getBounds(L);
-	var min = 1.7976931348623157e+308;
+	var min = Infinity;
 	var _g = 0;
-	while(_g < 2) {
-		var i = _g++;
-		var length = hsluv.Geometry.distanceLineFromOrigin(bounds[i]);
+	while(_g < bounds.length) {
+		var bound = bounds[_g];
+		++_g;
+		var length = hsluv.Geometry.distanceLineFromOrigin(bound);
 		min = Math.min(min,length);
 	}
 	return min;
@@ -444,13 +576,15 @@ hsluv.Hsluv.maxSafeChromaForL = function(L) {
 hsluv.Hsluv.maxChromaForLH = function(L,H) {
 	var hrad = H / 360 * Math.PI * 2;
 	var bounds = hsluv.Hsluv.getBounds(L);
-	var min = 1.7976931348623157e+308;
+	var min = Infinity;
 	var _g = 0;
 	while(_g < bounds.length) {
 		var bound = bounds[_g];
 		++_g;
 		var length = hsluv.Geometry.lengthOfRayUntilIntersect(hrad,bound);
-		if(length >= 0) min = Math.min(min,length);
+		if(length >= 0) {
+			min = Math.min(min,length);
+		}
 	}
 	return min;
 };
@@ -465,10 +599,18 @@ hsluv.Hsluv.dotProduct = function(a,b) {
 	return sum;
 };
 hsluv.Hsluv.fromLinear = function(c) {
-	if(c <= 0.0031308) return 12.92 * c; else return 1.055 * Math.pow(c,0.416666666666666685) - 0.055;
+	if(c <= 0.0031308) {
+		return 12.92 * c;
+	} else {
+		return 1.055 * Math.pow(c,0.416666666666666685) - 0.055;
+	}
 };
 hsluv.Hsluv.toLinear = function(c) {
-	if(c > 0.04045) return Math.pow((c + 0.055) / 1.055,2.4); else return c / 12.92;
+	if(c > 0.04045) {
+		return Math.pow((c + 0.055) / 1.055,2.4);
+	} else {
+		return c / 12.92;
+	}
 };
 hsluv.Hsluv.xyzToRgb = function(tuple) {
 	return [hsluv.Hsluv.fromLinear(hsluv.Hsluv.dotProduct(hsluv.Hsluv.m[0],tuple)),hsluv.Hsluv.fromLinear(hsluv.Hsluv.dotProduct(hsluv.Hsluv.m[1],tuple)),hsluv.Hsluv.fromLinear(hsluv.Hsluv.dotProduct(hsluv.Hsluv.m[2],tuple))];
@@ -478,10 +620,18 @@ hsluv.Hsluv.rgbToXyz = function(tuple) {
 	return [hsluv.Hsluv.dotProduct(hsluv.Hsluv.minv[0],rgbl),hsluv.Hsluv.dotProduct(hsluv.Hsluv.minv[1],rgbl),hsluv.Hsluv.dotProduct(hsluv.Hsluv.minv[2],rgbl)];
 };
 hsluv.Hsluv.yToL = function(Y) {
-	if(Y <= hsluv.Hsluv.epsilon) return Y / hsluv.Hsluv.refY * hsluv.Hsluv.kappa; else return 116 * Math.pow(Y / hsluv.Hsluv.refY,0.333333333333333315) - 16;
+	if(Y <= hsluv.Hsluv.epsilon) {
+		return Y / hsluv.Hsluv.refY * hsluv.Hsluv.kappa;
+	} else {
+		return 116 * Math.pow(Y / hsluv.Hsluv.refY,0.333333333333333315) - 16;
+	}
 };
 hsluv.Hsluv.lToY = function(L) {
-	if(L <= 8) return hsluv.Hsluv.refY * L / hsluv.Hsluv.kappa; else return hsluv.Hsluv.refY * Math.pow((L + 16) / 116,3);
+	if(L <= 8) {
+		return hsluv.Hsluv.refY * L / hsluv.Hsluv.kappa;
+	} else {
+		return hsluv.Hsluv.refY * Math.pow((L + 16) / 116,3);
+	}
 };
 hsluv.Hsluv.xyzToLuv = function(tuple) {
 	var X = tuple[0];
@@ -498,7 +648,9 @@ hsluv.Hsluv.xyzToLuv = function(tuple) {
 		varV = NaN;
 	}
 	var L = hsluv.Hsluv.yToL(Y);
-	if(L == 0) return [0,0,0];
+	if(L == 0) {
+		return [0,0,0];
+	}
 	var U = 13 * L * (varU - hsluv.Hsluv.refU);
 	var V = 13 * L * (varV - hsluv.Hsluv.refV);
 	return [L,U,V];
@@ -507,7 +659,9 @@ hsluv.Hsluv.luvToXyz = function(tuple) {
 	var L = tuple[0];
 	var U = tuple[1];
 	var V = tuple[2];
-	if(L == 0) return [0,0,0];
+	if(L == 0) {
+		return [0,0,0];
+	}
 	var varU = U / (13 * L) + hsluv.Hsluv.refU;
 	var varV = V / (13 * L) + hsluv.Hsluv.refV;
 	var Y = hsluv.Hsluv.lToY(L);
@@ -521,10 +675,14 @@ hsluv.Hsluv.luvToLch = function(tuple) {
 	var V = tuple[2];
 	var C = Math.sqrt(U * U + V * V);
 	var H;
-	if(C < 0.00000001) H = 0; else {
+	if(C < 0.00000001) {
+		H = 0;
+	} else {
 		var Hrad = Math.atan2(V,U);
-		H = Hrad * 180.0 / 3.1415926535897932;
-		if(H < 0) H = 360 + H;
+		H = Hrad * 180.0 / Math.PI;
+		if(H < 0) {
+			H = 360 + H;
+		}
 	}
 	return [L,C,H];
 };
@@ -541,8 +699,12 @@ hsluv.Hsluv.hsluvToLch = function(tuple) {
 	var H = tuple[0];
 	var S = tuple[1];
 	var L = tuple[2];
-	if(L > 99.9999999) return [100,0,H];
-	if(L < 0.00000001) return [0,0,H];
+	if(L > 99.9999999) {
+		return [100,0,H];
+	}
+	if(L < 0.00000001) {
+		return [0,0,H];
+	}
 	var max = hsluv.Hsluv.maxChromaForLH(L,H);
 	var C = max / 100 * S;
 	return [L,C,H];
@@ -551,8 +713,12 @@ hsluv.Hsluv.lchToHsluv = function(tuple) {
 	var L = tuple[0];
 	var C = tuple[1];
 	var H = tuple[2];
-	if(L > 99.9999999) return [H,0,100];
-	if(L < 0.00000001) return [H,0,0];
+	if(L > 99.9999999) {
+		return [H,0,100];
+	}
+	if(L < 0.00000001) {
+		return [H,0,0];
+	}
 	var max = hsluv.Hsluv.maxChromaForLH(L,H);
 	var S = C / max * 100;
 	return [H,S,L];
@@ -561,8 +727,12 @@ hsluv.Hsluv.hpluvToLch = function(tuple) {
 	var H = tuple[0];
 	var S = tuple[1];
 	var L = tuple[2];
-	if(L > 99.9999999) return [100,0,H];
-	if(L < 0.00000001) return [0,0,H];
+	if(L > 99.9999999) {
+		return [100,0,H];
+	}
+	if(L < 0.00000001) {
+		return [0,0,H];
+	}
 	var max = hsluv.Hsluv.maxSafeChromaForL(L);
 	var C = max / 100 * S;
 	return [L,C,H];
@@ -571,26 +741,41 @@ hsluv.Hsluv.lchToHpluv = function(tuple) {
 	var L = tuple[0];
 	var C = tuple[1];
 	var H = tuple[2];
-	if(L > 99.9999999) return [H,0,100];
-	if(L < 0.00000001) return [H,0,0];
+	if(L > 99.9999999) {
+		return [H,0,100];
+	}
+	if(L < 0.00000001) {
+		return [H,0,0];
+	}
 	var max = hsluv.Hsluv.maxSafeChromaForL(L);
 	var S = C / max * 100;
 	return [H,S,L];
 };
 hsluv.Hsluv.rgbToHex = function(tuple) {
 	var h = "#";
-	var _g1 = 0;
-	var _g = tuple.length;
-	while(_g1 < _g) {
-		var i = _g1++;
+	var _g = 0;
+	while(_g < 3) {
+		var i = _g++;
 		var chan = tuple[i];
-		h += StringTools.hex(Math.round(chan * 255),2).toLowerCase();
+		var c = Math.round(chan * 255);
+		var digit2 = c % 16;
+		var digit1 = (c - digit2) / 16 | 0;
+		h += hsluv.Hsluv.hexChars.charAt(digit1) + hsluv.Hsluv.hexChars.charAt(digit2);
 	}
 	return h;
 };
 hsluv.Hsluv.hexToRgb = function(hex) {
-	hex = hex.toUpperCase();
-	return [Std.parseInt("0x" + HxOverrides.substr(hex,1,2)) / 255.0,Std.parseInt("0x" + HxOverrides.substr(hex,3,2)) / 255.0,Std.parseInt("0x" + HxOverrides.substr(hex,5,2)) / 255.0];
+	hex = hex.toLowerCase();
+	var ret = [];
+	var _g = 0;
+	while(_g < 3) {
+		var i = _g++;
+		var digit1 = hsluv.Hsluv.hexChars.indexOf(hex.charAt(i * 2 + 1));
+		var digit2 = hsluv.Hsluv.hexChars.indexOf(hex.charAt(i * 2 + 2));
+		var n = digit1 * 16 + digit2;
+		ret.push(n / 255.0);
+	}
+	return ret;
 };
 hsluv.Hsluv.lchToRgb = function(tuple) {
 	return hsluv.Hsluv.xyzToRgb(hsluv.Hsluv.luvToXyz(hsluv.Hsluv.lchToLuv(tuple)));
@@ -629,6 +814,7 @@ hsluv.Hsluv.refU = 0.19783000664283;
 hsluv.Hsluv.refV = 0.46831999493879;
 hsluv.Hsluv.kappa = 903.2962962;
 hsluv.Hsluv.epsilon = 0.0088564516;
+hsluv.Hsluv.hexChars = "0123456789abcdef";
 var root = {
     "hsluvToRgb": hsluv.Hsluv.hsluvToRgb,
     "rgbToHsluv": hsluv.Hsluv.rgbToHsluv,
@@ -637,28 +823,41 @@ var root = {
     "hsluvToHex": hsluv.Hsluv.hsluvToHex,
     "hexToHsluv": hsluv.Hsluv.hexToHsluv,
     "hpluvToHex": hsluv.Hsluv.hpluvToHex,
-    "hexToHpluv": hsluv.Hsluv.hexToHpluv
-};// CommonJS module system (including Node)
-if (true) {
-    module['exports'] = root;
-}
+    "hexToHpluv": hsluv.Hsluv.hexToHpluv,
+    "lchToHpluv": hsluv.Hsluv.lchToHpluv,
+    "hpluvToLch": hsluv.Hsluv.hpluvToLch,
+    "lchToHsluv": hsluv.Hsluv.lchToHsluv,
+    "hsluvToLch": hsluv.Hsluv.hsluvToLch,
+    "lchToLuv": hsluv.Hsluv.lchToLuv,
+    "luvToLch": hsluv.Hsluv.luvToLch,
+    "xyzToLuv": hsluv.Hsluv.xyzToLuv,
+    "luvToXyz": hsluv.Hsluv.luvToXyz,
+    "xyzToRgb": hsluv.Hsluv.xyzToRgb,
+    "rgbToXyz": hsluv.Hsluv.rgbToXyz,
+    "lchToRgb": hsluv.Hsluv.lchToRgb,
+    "rgbToLch": hsluv.Hsluv.rgbToLch
+};
 
-// AMD module system
-if (true) {
-    !(__WEBPACK_AMD_DEFINE_FACTORY__ = (root),
-				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
-				(__WEBPACK_AMD_DEFINE_FACTORY__.call(exports, __webpack_require__, exports, module)) :
-				__WEBPACK_AMD_DEFINE_FACTORY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-}
+module.exports = root;
 
-// Export to browser
-if (typeof window !== 'undefined') {
-    window['hsluv'] = root;
-}
-})();
 
+/***/ }),
+
+/***/ "./webpack/hsluv.js":
+/*!**************************!*\
+  !*** ./webpack/hsluv.js ***!
+  \**************************/
+/*! no exports provided */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _lib_hsluv__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../lib/hsluv */ "./lib/hsluv.js");
+/* harmony import */ var _lib_hsluv__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_lib_hsluv__WEBPACK_IMPORTED_MODULE_0__);
+
+window.imagePalHsluv = _lib_hsluv__WEBPACK_IMPORTED_MODULE_0___default.a;
 
 /***/ })
-/******/ ]);
+
+/******/ });
 //# sourceMappingURL=image-pal-hsluv.js.map

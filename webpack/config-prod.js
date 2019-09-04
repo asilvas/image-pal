@@ -1,8 +1,8 @@
 const path = require('path');
 const webpack = require('webpack');
-const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 
 module.exports = {
+  mode: 'production',
   entry: {
     rgb: './webpack/rgb.js',
     hsluv: './webpack/hsluv.js'
@@ -19,15 +19,14 @@ module.exports = {
         use: {
           loader: 'babel-loader',
           options: {
-            presets: ['env'],
-            plugins: [require('babel-plugin-transform-object-rest-spread')]
+            presets: ['@babel/preset-env'],
+            plugins: [require('@babel/plugin-proposal-object-rest-spread')]
           }
         }
       }
     ]
   },
   plugins: [
-    new UglifyJSPlugin(),
     new webpack.DefinePlugin({
       'process.env': {
         'NODE_ENV': JSON.stringify('production')
